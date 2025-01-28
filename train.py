@@ -38,21 +38,7 @@ from model.embeddings.encoding import PositionalEncoding
 from model.transformer.build_transformer import Transformer 
 from model.transformer.build_transformer import build_transformer
 
-@dataclass 
-class Config: 
-    batch_size =  8,
-    num_epochs =  20,
-    lr =  10**-4,
-    seq_len =  350,
-    d_model =  512,
-    datasource =  'opus_books',
-    lang_src =  "en",
-    lang_tgt =  "it",
-    model_folder =  "weights",
-    model_basename =  "tmodel_",
-    preload =  "latest",
-    tokenizer_file =  "tokenizer_{0}.json",
-    experiment_name =  "runs/tmodel"
+from config import Config
 
 def get_weights_file_path(config, epoch: str):
     model_folder = f"{config.datasource}_{config.model_folder}"
@@ -308,7 +294,7 @@ def train_model(config):
             # Compute the loss using a simple cross entropy
             with torch.autocast(device_type = device, dtype = torch.bfloat16):
                 loss = loss_fn(proj_output.view(-1, tokenizer_tgt.get_vocab_size()), label.view(-1))
-                
+
             batch_iterator.set_postfix({"loss": f"{loss.item():6.3f}"})
 
             # Log the loss
