@@ -225,25 +225,6 @@ def get_model(vocab_src_len, vocab_tgt_len):
     model = build_transformer(vocab_src_len, vocab_tgt_len, Config.seq_len, Config.seq_len, d_model=Config.d_model)
     return model
 
-# cosing decay learning scheduler
-max_lr = 6e-4
-min_lr = max_lr * 0.1
-warmup_steps = 715
-max_steps = 19073 # 19,073 steps is ~1 epoch, if data is 10B tokens and batch size 0.5M tokens
-def get_lr(it):
-    # 1) linear warmup for warmup_iters steps
-    if it < warmup_steps:
-        # it + 1 to prevent from multiplying by zero 
-        return max_lr * (it+1) / warmup_steps
-    # 2) if it > lr_decay_iters, return min learning rate
-    if it > max_steps:
-        return min_lr
-    # 3) in between, use cosine decay down to min learning rate
-    decay_ratio = (it - warmup_steps) / (max_steps - warmup_steps)
-    assert 0 <= decay_ratio <= 1
-    coeff = 0.5 * (1.0 + math.cos(math.pi * decay_ratio)) # coeff starts at 1 and goes to 0
-    return min_lr + coeff * (max_lr - min_lr)
-
 def train_model():
     # Define the device
     device = "cuda" if torch.cuda.is_available() else "mps" if torch.has_mps or torch.backends.mps.is_available() else "cpu"
@@ -267,7 +248,7 @@ def train_model():
     # Tensorboard
     writer = SummaryWriter(Config.experiment_name)
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=Config['lr'], eps=1e-9)
+    optimizer = torch.optim.Adam(model.parameters(), lr=Config.lr, eps=1e-9)
 
     # If the user specified a model to preload before training, load it
     initial_epoch = 0
