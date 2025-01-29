@@ -243,7 +243,7 @@ def train_model():
     # Make sure the weights folder exists
     Path(f"{Config.datasource}_{Config.model_folder}").mkdir(parents=True, exist_ok=True)
 
-    train_dataloader, val_dataloader, tokenizer_src, tokenizer_tgt = get_ds(Config)
+    train_dataloader, val_dataloader, tokenizer_src, tokenizer_tgt = get_ds()
     model = get_model(tokenizer_src.get_vocab_size(), tokenizer_tgt.get_vocab_size()).to(device)
     # Tensorboard
     writer = SummaryWriter(Config.experiment_name)
