@@ -272,7 +272,7 @@ def train_model():
     # If the user specified a model to preload before training, load it
     initial_epoch = 0
     global_step = 0
-    preload = Config['preload']
+    preload = Config.preload
     model_filename = latest_weights_file_path() if preload == 'latest' else get_weights_file_path(preload) if preload else None
     if model_filename:
         print(f'Preloading model {model_filename}')
