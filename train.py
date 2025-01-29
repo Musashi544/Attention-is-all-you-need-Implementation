@@ -244,7 +244,7 @@ def train_model(config):
     device = torch.device(device)
 
     # Make sure the weights folder exists
-    Path(f"{config['datasource']}_{config['model_folder']}").mkdir(parents=True, exist_ok=True)
+    Path(f"{config.datasource}_{config.model_folder}").mkdir(parents=True, exist_ok=True)
 
     train_dataloader, val_dataloader, tokenizer_src, tokenizer_tgt = get_ds(config)
     model = get_model(config, tokenizer_src.get_vocab_size(), tokenizer_tgt.get_vocab_size()).to(device)
@@ -315,7 +315,7 @@ def train_model(config):
             global_step += 1
 
         # Run validation at the end of every epoch
-        run_validation(model, val_dataloader, tokenizer_src, tokenizer_tgt, config['seq_len'], device, lambda msg: batch_iterator.write(msg), global_step, writer)
+        run_validation(model, val_dataloader, tokenizer_src, tokenizer_tgt, config.seq_len, device, lambda msg: batch_iterator.write(msg), global_step, writer)
 
         # Save the model at the end of every epoch
         model_filename = get_weights_file_path(config, f"{epoch:02d}")
